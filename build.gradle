@@ -1,0 +1,130 @@
+buildscript {
+    dependencies {
+        //classpath files('libs/byte-buddy-1.11.5.jar')
+//        classpath group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
+//        classpath group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+//        classpath group: 'org.springframework', name: 'spring-core', version: '5.3.8'
+//        classpath group: 'net.bytebuddy', name: 'byte-buddy', version: '1.11.5'
+//        classpath group: 'org.javassist', name: 'javassist', version: '3.28.0-GA'
+//
+//        classpath 'com.mageddo.lombok:lombok-ext:2.3.4'
+//        classpath 'org.projectlombok:lombok:1.18.4'
+    }
+}
+plugins {
+    id 'groovy'
+    id 'java'
+    id "io.franzbecker.gradle-lombok" version "3.1.0"
+    //id "io.spring.dependency-management" version "1.0.11.RELEASE"
+}
+
+apply plugin: 'maven'
+//apply plugin: 'io.spring.dependency-management'
+group 'org.sirenia'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+    maven { url 'http://maven.aliyun.com/nexus/content/repositories/jcenter' }
+    maven { url "https://plugins.gradle.org/m2/" }
+}
+
+ext{
+    springVersion='5.3.8'
+    guavaVersion='30.1.1-jre'
+    groovyVersion='3.0.8'
+    commonsLang3Version='3.12.0'
+    lombokVersion='1.18.4'
+    //lombokExtVersion='2.3.4'
+}
+//dependencyManagement {
+//    dependencies {
+//        dependency 'org.springframework:spring-core:${springVersion}'
+//    }
+//}
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
+    implementation group: 'com.google.guava', name: 'guava', version: guavaVersion
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: commonsLang3Version
+    implementation group: 'org.springframework', name: 'spring-core', version: springVersion
+
+    //compile "com.mageddo.lombok:lombok-ext:$lombokExtVersion"
+    compile "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    //annotationProcessor "com.mageddo.lombok:lombok-ext:$lombokExtVersion"
+
+    implementation group: 'net.bytebuddy', name: 'byte-buddy', version: '1.11.5'
+    compile group: 'org.javassist', name: 'javassist', version: '3.28.0-GA'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.31'
+    testImplementation group: 'org.spockframework', name: 'spock-core', version: '2.0-groovy-3.0'
+
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+[compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+compileJava {
+    options.compilerArgs << "-parameters"
+    options.annotationProcessorPath = configurations.annotationProcessor
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task "create-dirs" doLast {
+    sourceSets*.java.srcDirs*.each {
+        it.mkdirs()
+    }
+    sourceSets*.groovy.srcDirs*.each {
+        it.mkdirs()
+    }
+    sourceSets*.resources.srcDirs*.each {
+        it.mkdirs()
+    }
+}
+
+classes.doLast {
+//    try {
+//        println "prepare: generating mixin class"
+//        def classpaths = [sourceSets*.resources.srcDirs].flatten()
+//        classpaths += [sourceSets*.groovy.srcDirs].flatten()
+//        classpaths << new File(projectDir, '/build/classes/java/main')
+//        def loader = new GroovyClassLoader()
+//        classpaths.each { File dir ->
+//            loader.addClasspath(dir.absolutePath)
+//        }
+//        println "begin: generating mixin class"
+//        def clazz = loader.loadClass('org.sirenia.topfunc.mixin.MixinBytebuddyImpl')
+//        clazz.newInstance().generate(classpaths[-1])
+//        println "end: generating mixin class"
+//    }catch(e){
+//        println "error: generating mixin class"
+//        logger.error("",e)
+//        e.printStackTrace()
+//    }
+}
+
+def localMavenRepo = 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+
+// upload Task, Gradle will generate pom.xml
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: localMavenRepo)
+
+            //generate pom.xml
+            pom.project {
+                name = project.name
+                packaging = 'jar'
+                description = 'description'
+            }
+        }
+
+    }
+}
