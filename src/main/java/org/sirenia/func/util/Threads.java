@@ -21,7 +21,6 @@ public abstract class Threads {
             Suppliers.memoize(() -> ObjectFunc.let(new ScheduledThreadPoolExecutor(1, factory(),
                     new ThreadPoolExecutor.AbortPolicy() {
                     }), it -> {
-                it.setMaximumPoolSize(1);
             }));
     private static ThreadFactory factory() {
         return new ThreadFactoryBuilder().setDaemon(true)
