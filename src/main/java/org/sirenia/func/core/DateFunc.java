@@ -21,7 +21,7 @@ public abstract class DateFunc {
         DateTimeFormatter fmt = formatters.get(pattern);
         if(fmt == null){
             fmt = DateTimeFormatter.ofPattern(pattern);
-            formatters.putIfAbsent(pattern,fmt);
+            formatters.put(pattern,fmt);
         }
         return fmt;
     }

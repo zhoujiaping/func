@@ -294,7 +294,7 @@ public abstract class CollectionFunc {
      * inverse key and value
      */
     @Pure
-    public static @Nonnull
+    public static @Nullable
     <K, V> Map<V, K> inverse(@Nullable Map<K, V> map) {
         if (map == null) {
             return null;
