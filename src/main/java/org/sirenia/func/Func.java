@@ -369,7 +369,7 @@ public abstract class Func{
      * inverse key and value
      */
     @Pure
-    public static @Nonnull
+    public static @Nullable
     <K, V> Map<V, K> inverse(@Nullable Map<K, V> map) {
         if (map == null) {
             return null;
@@ -544,7 +544,7 @@ public abstract class Func{
         DateTimeFormatter fmt = formatters.get(pattern);
         if(fmt == null){
             fmt = DateTimeFormatter.ofPattern(pattern);
-            formatters.putIfAbsent(pattern,fmt);
+            formatters.put(pattern,fmt);
         }
         return fmt;
     }
