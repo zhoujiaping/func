@@ -8,6 +8,7 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -15,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -198,7 +200,16 @@ public abstract class CollectionFunc {
     @Pure
     public static @Nonnull
     <K, V> Map<K, V> mapOf(@Nullable Map<K, V> origMap) {
-        Map<K, V> map = new LinkedHashMap<>();
+        Map<K, V> map = new HashMap<>();
+        if (origMap != null) {
+            map.putAll(origMap);
+        }
+        return map;
+    }
+
+    @Pure
+    public static @Nonnull <K,V> TreeMap<K,V> treeMapOf(@Nullable Map<K, V> origMap){
+        TreeMap<K, V> map = new TreeMap<>();
         if (origMap != null) {
             map.putAll(origMap);
         }
